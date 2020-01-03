@@ -56,7 +56,6 @@ function draw() {
         for (let i = 0; i < randommaze / 100 * (cols * rows); i++) {
             let x = floor(random(cols));
             let y = floor(random(rows));
-            console.log(x, y);
             if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
                 maze[index(x, y)].removeWall(maze[index(x + 1, y)]);
             }
