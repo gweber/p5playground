@@ -1,11 +1,6 @@
 let scale = 10;
-
 let width = 600;
-//let width = windowWidth - (windowWidth % scale) - 20;
-
 let height = 600;
-//let height = windowHeight - (windowHeight % scale) - 20;
-
 
 let rows = height / scale;
 let cols = width / scale;
@@ -70,14 +65,12 @@ function draw() {
     }
 
     for (let loops = 0; loops < pathfindercount; loops++) {
-
         if (!stack.length) {
             //console.log("!stack.length");
             if (pathfinder == undefined) {
                 pathfinder = new Pathfinder(0, 0);
                 pathstack.push(index(0, 0));
             }
-
             // stack is filled and not target
             if (pathstack.length > 0 && !(pathfinder.x == cols - 1 && pathfinder.y == rows - 1)) {
                 //console.log("pathstack length");
@@ -96,7 +89,6 @@ function draw() {
                     let temp = pathstack[pathstack.length - 1];
                     pathfinder.x = temp % (cols);
                     pathfinder.y = floor(temp / cols);
-
                 }
             } else {
                 console.log("pathfinder done");
@@ -266,69 +258,9 @@ function MazeCell(x, y) {
 function Pathfinder(x, y) {
     this.x = x;
     this.y = y;
-    this.direction = 0;
-    this.done = false;
-    this.loopcount = 0;
-
-
-    this.findPath = function () {
-        //console.log(this);
-
-        if (this.x == cols - 1 && this.y == rows - 1) {
-            //console.log("end found");
-            noLoop();
-        }
-
-        // check that no wall is in the current direction
-        if (maze[index(this.x, this.y)].walls[this.direction] === false) {
-            // goto new spot
-            if (this.direction == 0 && this.y > 0 && maze[index(this.x, this.y - 1)].pathfinder < 1) {
-                console.log("move pathfinder to top");
-                this.y -= 1;
-            }
-            if (this.direction == 1 && this.x < cols - 1 && maze[index(this.x + 1, this.y)].pathfinder < 1) {
-                console.log("move pathfinder to right");
-                this.x += 1;
-            }
-            if (this.direction == 2 && this.y < rows - 1 && maze[index(this.x, this.y + 1)].pathfinder < 1) {
-                console.log("move pathfinder to down");
-                this.y += 1;
-            }
-            if (this.direction == 3 && this.x > 0 && maze[index(this.x - 1, this.y)].pathfinder < 1) {
-                console.log("move pathfinder to left");
-                this.x -= 1;
-            }
-        } else {
-            //console.log("change direction", this.direction);
-            this.direction = (this.direction + 1) % 4;
-        }
-
-        if (this.loopcount++ > 20) {
-            //console.log("loop count finished")
-            this.done = true;
-        }
-        return maze[index(this.x, this.y)].walls;
-    }
-
-
-    // is there a way
-    this.check = function () {
-        let check = false;
-        for (let i = 0; i < maze[index(this.x, this.y)].walls.length; i++) {
-            if (maze[index(this.x, this.y)].walls[i]) {
-                check = true;
-            }
-        }
-        return check;
-    }
-
-
 
     this.getNext = function (x, y) {
         //console.log("getNext: ", x, y);
-
-
-
         // down
         if (y < rows - 1 && maze[index(x, y)].walls[2] === false && pathstack.includes(index(x, y + 1)) === false && maze[index(x, y + 1)].isDead == false) {
             //console.log("getNext: down");
@@ -336,8 +268,6 @@ function Pathfinder(x, y) {
         } else {
             //console.log("getNext: down not possible");
         }
-
-
         // right
         if (x < cols - 1 && maze[index(x, y)].walls[1] === false && pathstack.includes(index(x + 1, y)) === false && maze[index(x + 1, y)].isDead == false) {
             //console.log("getNext: right");
@@ -345,7 +275,6 @@ function Pathfinder(x, y) {
         } else {
             //console.log("getNext: right not possible");
         }
-
         // left
         if (x > 0 && maze[index(x, y)].walls[3] === false && pathstack.includes(index(x - 1, y)) === false && maze[index(x - 1, y)].isDead == false) {
             //console.log("move pathfinder to left");
@@ -360,8 +289,6 @@ function Pathfinder(x, y) {
         } else {
             //console.log("getNext: top not possible");
         }
-
-
         // return undefined if nowhere to go
         //console.log("getNext: no way found");
         return undefined;
