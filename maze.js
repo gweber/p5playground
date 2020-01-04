@@ -7,7 +7,7 @@ let cols = width / scale;
 
 let maze = [];
 // randommaze = % of maze cells to clean after generation
-let doRandomMaze = true;
+let doRandomMaze = false;
 let randommaze = 20;
 
 let current;
@@ -15,9 +15,8 @@ let stack = [];
 let pathstack = [];
 
 let mazeloopcount = 100;
-let pathfindercount = 1;
+let pathfindercount = 100;
 
-let next;
 let pathfinder;
 
 function setup() {
@@ -36,7 +35,7 @@ function setup() {
 
 
 function draw() {
-
+    let next;
     //for (let loops = 0; loops < mazeloopcount; loops++) {
     while (stack.length) {
         if (stack.length) {
@@ -56,6 +55,7 @@ function draw() {
         for (let i = 0; i < randommaze / 100 * (cols * rows); i++) {
             let x = floor(random(cols));
             let y = floor(random(rows));
+            // prevent border walls to be removed
             if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
                 maze[index(x, y)].removeWall(maze[index(x + 1, y)]);
             }
@@ -71,7 +71,7 @@ function draw() {
                 pathstack.push(index(0, 0));
             }
             // stack is filled and not target
-            if (pathstack.length > 0 && !(pathfinder.x == cols - 1 && pathfinder.y == rows - 1)) {
+            if (pathstack.length > 0 && !(pathfinder.x == cols - 1 && pathfinder.y == 0)) {
                 //console.log("pathstack length");
                 // grab from stack
                 next = pathfinder.getNext(pathfinder.x, pathfinder.y);
