@@ -1,23 +1,25 @@
-let scale = 10;
-let width = 600;
-let height = 600;
+let scale = 20;
+let width = 400;
+let height = 400;
 
 let rows = height / scale;
 let cols = width / scale;
 
 let maze = [];
 // randommaze = % of maze cells to clean after generation
-let doRandomMaze = false;
-let randommaze = 20;
+let doRandomMaze = true;
+let randommaze = 100;
 
 let current;
 let stack = [];
 let pathstack = [];
 
 let mazeloopcount = 100;
-let pathfindercount = 100;
+let pathfindercount = 10;
 
 let pathfinder;
+
+let backtracefinder = true;
 
 function setup() {
     createCanvas(width, height);
@@ -57,21 +59,25 @@ function draw() {
             let y = floor(random(rows));
             // prevent border walls to be removed
             if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-                maze[index(x, y)].removeWall(maze[index(x + 1, y)]);
+                if ((x + y) % 2) {
+                    maze[index(x, y)].removeWall(maze[index(x + 1, y)]);
+                } else {
+                    maze[index(x, y)].removeWall(maze[index(x, y + 1)]);
+                }
             }
         }
         doRandomMaze = false;
     }
 
     for (let loops = 0; loops < pathfindercount; loops++) {
-        if (!stack.length) {
+        if (!stack.length && backtracefinder == true) {
             //console.log("!stack.length");
             if (pathfinder == undefined) {
                 pathfinder = new Pathfinder(0, 0);
                 pathstack.push(index(0, 0));
             }
             // stack is filled and not target
-            if (pathstack.length > 0 && !(pathfinder.x == cols - 1 && pathfinder.y == 0)) {
+            if (pathstack.length > 0 && !(pathfinder.x == cols - 1 && pathfinder.y == rows - 1)) {
                 //console.log("pathstack length");
                 // grab from stack
                 next = pathfinder.getNext(pathfinder.x, pathfinder.y);
@@ -91,6 +97,7 @@ function draw() {
                 }
             } else {
                 console.log("pathfinder done");
+                backtracefinder = false;
                 noLoop();
             }
         }
@@ -260,6 +267,7 @@ function Pathfinder(x, y) {
 
     this.getNext = function (x, y) {
         //console.log("getNext: ", x, y);
+
         // down
         if (y < rows - 1 && maze[index(x, y)].walls[2] === false && pathstack.includes(index(x, y + 1)) === false && maze[index(x, y + 1)].isDead == false) {
             //console.log("getNext: down");
@@ -267,12 +275,22 @@ function Pathfinder(x, y) {
         } else {
             //console.log("getNext: down not possible");
         }
+
         // right
         if (x < cols - 1 && maze[index(x, y)].walls[1] === false && pathstack.includes(index(x + 1, y)) === false && maze[index(x + 1, y)].isDead == false) {
             //console.log("getNext: right");
             return index(x + 1, y);
         } else {
             //console.log("getNext: right not possible");
+        }
+
+
+        // top
+        if (y > 0 && maze[index(x, y)].walls[0] === false && pathstack.includes(index(x, y - 1)) === false && maze[index(x, y - 1)].isDead == false) {
+            //console.log("getNext: top");
+            return index(x, y - 1);
+        } else {
+            //console.log("getNext: top not possible");
         }
         // left
         if (x > 0 && maze[index(x, y)].walls[3] === false && pathstack.includes(index(x - 1, y)) === false && maze[index(x - 1, y)].isDead == false) {
@@ -281,13 +299,9 @@ function Pathfinder(x, y) {
         } else {
             //console.log("getNext: left not possible");
         }
-        // top
-        if (y > 0 && maze[index(x, y)].walls[0] === false && pathstack.includes(index(x, y - 1)) === false && maze[index(x, y - 1)].isDead == false) {
-            //console.log("getNext: top");
-            return index(x, y - 1);
-        } else {
-            //console.log("getNext: top not possible");
-        }
+
+
+
         // return undefined if nowhere to go
         //console.log("getNext: no way found");
         return undefined;
@@ -297,5 +311,9 @@ function Pathfinder(x, y) {
         pathstack = [];
     }
 
+
+}
+
+function Dijkstra() {
 
 }
