@@ -19,14 +19,30 @@ function setup() {
     createCanvas(width, height);
     background(backgroundcolor);
     initDijkstra(startx, starty);
+    frameRate(20);
 }
 
+/**
+ * initiate the Dijkstra pool cells with initial starting point at x and y
+ * and create barriers 
+ * */
 
 function initDijkstra(x, y) {
+    // check that clicks outside of canvas are captured inside the canvas
+    if (y >= rows) {
+        y = rows - 1;
+    }
+    if (x >= cols) {
+        x = cols - 1;
+    }
+    // init a fresh pool
     pool = [];
+    // create Dijkstra elements for all cells
     for (let i = 0; i < rows * cols; i++) {
         pool.push(new Dijkstra(i));
     }
+
+    // push 0 as distance for the initial cell
     pool[index(x, y)].distance = 0;
     startx = x;
     starty = y;
@@ -47,14 +63,11 @@ function initDijkstra(x, y) {
         for (let barx = 0; barx < 9; barx++) {
             pool[index(barx, 9)].barrier = true;
         }
-        for (let barx = 5; barx < 8; barx++) {
-            pool[index(barx, 11)].barrier = true;
-        }
-        for (let barx = 5; barx < 8; barx++) {
-            pool[index(barx, 11)].barrier = true;
-        }
         for (let barx = 10; barx < 12; barx++) {
             pool[index(barx, 10)].barrier = true;
+        }
+        for (let barx = 5; barx < 18; barx++) {
+            pool[index(barx, 11)].barrier = true;
         }
         for (let barx = 2; barx < 5; barx++) {
             pool[index(barx, 12)].barrier = true;
@@ -62,7 +75,6 @@ function initDijkstra(x, y) {
         for (let barx = 7; barx < 11; barx++) {
             pool[index(barx, 13)].barrier = true;
         }
-
         for (let barx = 13; barx < 16; barx++) {
             pool[index(barx, 13)].barrier = true;
         }
@@ -93,9 +105,7 @@ function initDijkstra(x, y) {
             pool[index(12, bary)].barrier = true;
         }
     }
-
-
-
+    // random elements as barrier
     // for (let ran = 0; ran < (rows * cols) / 5; ran++) {
     //     randpos = floor(random(cols * rows));
     //     //console.log(randpos);
